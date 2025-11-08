@@ -3,37 +3,63 @@
 import Header from "./components/header";
 import Link from "next/link";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { motion } from "framer-motion";
 
 export default function Home() {
   return (
     <ProtectedRoute>
-      <div className="relative min-h-screen w-screen overflow-auto bg-pink-50 flex flex-col items-center justify-center px-6">
+      <div className="min-h-screen w-screen overflow-hidden bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100 flex flex-col justify-center items-center">
+        {/* Header */}
         <Header />
 
-        <main className="flex flex-col items-center justify-center text-center mt-28 space-y-6">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900">
-            Alles Gute zum Geburtstag, meine Liebe! 💖
-          </h1>
+        {/* Floating gradient background blobs */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
 
-          <p className="text-lg md:text-2xl text-gray-700 max-w-xl">
-            Wishing you a day filled with love, laughter, and unforgettable memories. 💌
-          </p>
+        {/* Main content */}
+        <main className="relative z-10 flex flex-col items-center justify-center text-center mt-24 px-6">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl md:text-6xl font-extrabold text-gray-800 leading-snug"
+          >
+            💐 Happy Birthday, <span className="text-purple-600">My Love!</span>
+          </motion.h1>
 
-          <div className="flex gap-4 mt-8">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="text-lg md:text-2xl text-gray-700 max-w-2xl mt-6"
+          >
+            Wishing you a day filled with warmth, laughter, and the sweetest memories. Let’s make
+            this celebration unforgettable 💖
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="flex flex-wrap justify-center gap-4 mt-10"
+          >
             <Link
               href="/timeline"
-              className="px-6 py-3 rounded-lg bg-purple-500 text-white font-semibold hover:bg-purple-600 transition"
+              className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-200"
             >
-              See Memories
+              🎞 See Memories
             </Link>
 
             <Link
               href="/gift"
-              className="px-6 py-3 rounded-lg bg-pink-500 text-white font-semibold hover:bg-pink-600 transition"
+              className="px-8 py-3 rounded-full bg-white text-purple-600 border border-purple-300 font-semibold shadow hover:bg-purple-50 transition"
             >
-              Plan Activities
+              🎁 Plan Activities
             </Link>
-          </div>
+          </motion.div>
+
+          {/* Extra subtle footer-like note */}
+          <p className="text-gray-500 text-sm mt-20 mb-8">Crafted with 💜 for someone special</p>
         </main>
       </div>
     </ProtectedRoute>

@@ -1,72 +1,51 @@
 "use client";
-import Link from "next/link";
+
 import { useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/lib/firebase";
+import { MessageCircleHeart } from "lucide-react";
 
-const presetMessage = `
-🎉 Happy Birthday! 🎂💖
-Надтай хамт өнгөрүүлсэн өдрүүд үнэхээр дурсамжтай байлаа!
-`;
+export default function GuestbookWidget() {
+  const [isOpen, setIsOpen] = useState(false);
 
-export default function BirthdayCardButton() {
-  const [clicked, setClicked] = useState(false);
-  const [bgColor, setBgColor] = useState("bg-pink-100");
-  const [user, loading] = useAuthState(auth);
-
-  const handleClick = () => {
-    setClicked(true);
-    setBgColor("bg-yellow-100");
-  };
+  // 🩷 Энд өөрийн мэндчилгээний үгээ бичнэ
+  const greeting =
+    "Happy Birthday to the most wonderful person! 🎂💖 Wishing you love, laughter, and every happiness today and always.";
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-pink-50">
-      {!clicked && (
-        <button
-          onClick={handleClick}
-          className={`
-            text-6xl font-bold w-32 h-32 rounded-full bg-purple-500 text-white shadow-lg
-            flex items-center justify-center transition transform duration-300
-            hover:scale-110 hover:bg-pink-500 active:scale-95
-          `}>
-          💌
-        </button>
-      )}
+    <>
+      {/* Floating Button */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-pink-400 to-purple-500 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-all duration-300"
+      >
+        <MessageCircleHeart size={24} />
+      </button>
 
-      {clicked && (
+      {/* Modal */}
+      {isOpen && (
         <div
-          className={`
-            mt-10 p-6 max-w-sm rounded-xl shadow-lg text-center
-            ${bgColor} transition-colors duration-500 animate-scale-up
-          `}>
-          <h2 className="text-2xl font-bold text-pink-600 mb-4">
-             {user?.displayName} Birthday Card
-          </h2>
-          <p className="mb-5 text-gray-700 whitespace-pre-wrap">{presetMessage}</p>
-          <Link
-            href="/"
-            className="px-4 py-2 bg-purple-400 rounded-full text-white font-bold hover:bg-purple-300 transition">
-            Back Home
-          </Link>
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-3xl shadow-2xl p-8 text-center w-[90%] max-w-md animate-fadeIn"
+          >
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              💌 Random one to special person
+            </h2>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              {greeting}
+            </p>
+
+            <button
+              onClick={() => setIsOpen(false)}
+              className="mt-6 bg-gradient-to-r from-pink-400 to-purple-500 text-white px-6 py-2 rounded-full hover:scale-105 transition-all"
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes scale-up {
-          0% {
-            transform: scale(0);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-
-        .animate-scale-up {
-          animation: scale-up 0.5s ease-out forwards;
-        }
-      `}</style>
-    </div>
+    </>
   );
 }

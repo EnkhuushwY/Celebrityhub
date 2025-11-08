@@ -17,7 +17,7 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen text-lg font-semibold">
-        Түр хүлээнэ үү...
+        Loading...
       </div>
     );
   }

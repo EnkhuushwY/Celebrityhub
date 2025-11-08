@@ -6,9 +6,11 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
+import { isMobile } from "react-device-detect";
 
 export default function SignUpPage() {
   const [username, setUsername] = useState("");
@@ -36,7 +38,11 @@ export default function SignUpPage() {
   const handleGoogleSignUp = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      if (isMobile) {
+        await signInWithRedirect(auth, provider); // Mobile fallback
+      } else {
+        await signInWithPopup(auth, provider); // Desktop
+      }
       router.push("/"); // Google signup амжилттай бол home руу
     } catch (err: any) {
       setError(err.message);
@@ -46,9 +52,7 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-white px-4">
       <div className="bg-white shadow-2xl rounded-3xl p-8 w-full max-w-md text-center space-y-6">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">
-          Sign Up 🎉
-        </h1>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">Sign Up 🎉</h1>
         <p className="text-gray-600 text-sm md:text-base">
           Create your account to start celebrating birthdays together 🎂
         </p>
@@ -71,11 +75,7 @@ export default function SignUpPage() {
             required
           />
 
-          {error && (
-            <p className="text-red-500 text-sm bg-red-50 p-2 rounded-lg">
-              {error}
-            </p>
-          )}
+          {error && <p className="text-red-500 text-sm bg-red-50 p-2 rounded-lg">{error}</p>}
 
           <button
             type="submit"
@@ -101,10 +101,7 @@ export default function SignUpPage() {
 
         <p className="text-gray-600 text-sm mt-4">
           Already have an account?{" "}
-          <a
-            href="/login"
-            className="text-purple-600 font-semibold hover:underline"
-          >
+          <a href="/login" className="text-purple-600 font-semibold hover:underline">
             Login
           </a>
         </p>

@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "celebrityhub-d2bae"
+    "site": "celebrityhub-1204",
+    "public": "public"
   }
 }

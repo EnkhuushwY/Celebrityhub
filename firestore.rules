@@ -1,9 +1,19 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Хэрэглэгч зөвхөн өөрийн doc-г унших, бичих боломжтой
-    match /activities/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    match /posts/{postId} {
+      allow read: if true; // бүх хүн унших боломжтой
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+  }
+}
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /posts/{userId}/{allPaths=**} {
+      allow read: if true; // зураг бүх хүнд уншигдана
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }

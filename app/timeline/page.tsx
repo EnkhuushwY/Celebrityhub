@@ -1,127 +1,89 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { db } from "@/lib/firebase";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import ProtectedRoute from "../components/ProtectedRoute";
+import Header from "../components/header";
 
-type Memory = {
-  date: string;
+type Post = {
+  id: string;
   title: string;
   description: string;
-  imageSrc: string;
+  date: string;
+  imageUrl: string;
 };
 
-const memories: Memory[] = [
-  {
-    date: "2022-05-01",
-    title: "Анхны уулзалт 💕",
-    description: "Бид анх уулзсан өдөр, тэр өдөр үнэхээр мартагдашгүй байлаа.",
-    imageSrc: "/memories/meeting.jpg",
-  },
-  {
-    date: "2023-03-14",
-    title: "Кино өдөр 🍿",
-    description: "Бид хамт кино үзэж, popcorn идэж хөгжилтэй өдөр өнгөрүүлсэн.",
-    imageSrc: "/memories/movie.jpg",
-  },
-  {
-    date: "2024-07-07",
-    title: "Сюрприз бэлэг 🎁",
-    description: "Чамд зориулж бэлэг бэлдсэн өдөр, чи үнэхээр баярласан шүү!",
-    imageSrc: "/memories/gift.jpg",
-  },
-  {
-    date: "2022-05-01",
-    title: "Анхны уулзалт 💕",
-    description: "Бид анх уулзсан өдөр, тэр өдөр үнэхээр мартагдашгүй байлаа.",
-    imageSrc: "/memories/meeting.jpg",
-  },
-  {
-    date: "2023-03-14",
-    title: "Кино өдөр 🍿",
-    description: "Бид хамт кино үзэж, popcorn идэж хөгжилтэй өдөр өнгөрүүлсэн.",
-    imageSrc: "/memories/movie.jpg",
-  },
-  {
-    date: "2024-07-07",
-    title: "Сюрприз бэлэг 🎁",
-    description: "Чамд зориулж бэлэг бэлдсэн өдөр, чи үнэхээр баярласан шүү!",
-    imageSrc: "/memories/gift.jpg",
-  },
-  {
-    date: "2022-05-01",
-    title: "Анхны уулзалт 💕",
-    description: "Бид анх уулзсан өдөр, тэр өдөр үнэхээр мартагдашгүй байлаа.",
-    imageSrc: "/memories/meeting.jpg",
-  },
-  {
-    date: "2023-03-14",
-    title: "Кино өдөр 🍿",
-    description: "Бид хамт кино үзэж, popcorn идэж хөгжилтэй өдөр өнгөрүүлсэн.",
-    imageSrc: "/memories/movie.jpg",
-  },
-  {
-    date: "2024-07-07",
-    title: "Сюрприз бэлэг 🎁",
-    description: "Чамд зориулж бэлэг бэлдсэн өдөр, чи үнэхээр баярласан шүү!",
-    imageSrc: "/memories/gift.jpg",
-  },
-];
+export default function TimelinePage() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [selected, setSelected] = useState<Post | null>(null);
 
-export default function Timeline() {
-  const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
+  useEffect(() => {
+    const q = query(collection(db, "posts"), orderBy("date", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Post[];
+      setPosts(data);
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
-    <div className="min-h-screen w-screen overflow-x-hidden overflow-y-auto bg-gradient-to-b from-pink-100 to-purple-100 p-8 flex flex-col items-center">
-      <h1 className="text-4xl font-bold mb-8 text-purple-700">
-        Our Memories ❤️
-      </h1>
+    <ProtectedRoute>
+      <Header />
+      <div className="min-h-screen p-8 flex flex-col items-center bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100">
+        
+        <h1 className="text-4xl font-bold mt-15 mb-8 text-purple-700">Our Memories❤️</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
-        {memories.map((memory, idx) => (
-          <div
-            key={idx}
-            className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer hover:scale-105 transform transition duration-300"
-            onClick={() => setSelectedMemory(memory)}>
-            <img
-              src={memory.imageSrc}
-              alt={memory.title}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-4">
-              <h2 className="font-bold text-lg">{memory.title}</h2>
-              <p className="text-sm text-gray-500">{memory.date}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
+          {posts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer hover:scale-105 transform transition"
+              onClick={() => setSelected(post)}
+            >
+              {post.imageUrl ? (
+                <img src={post.imageUrl} alt={post.title} className="w-full h-48 object-cover" />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">
+                  No Image
+                </div>
+              )}
+              <div className="p-4">
+                <h2 className="font-bold text-lg">{post.title}</h2>
+                <p className="text-sm text-gray-500">{post.date}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Modal */}
-      {selectedMemory && (
-        <div className="fixed inset-0 bg-gradient-to-b from-pink-100 to-purple-100 bg-opacity-80 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full overflow-hidden shadow-2xl relative">
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 font-bold text-2xl z-50"
-              onClick={() => setSelectedMemory(null)}>
-              ×
-            </button>
-
-            <div className="p-6">
-              <h2 className="font-bold text-3xl mb-2 text-purple-700">
-                {selectedMemory.title}
-              </h2>
-              <p className="text-gray-700 text-lg mb-2">
-                {selectedMemory.description}
-              </p>
-              <p className="text-gray-400 text-sm">{selectedMemory.date}</p>
-            </div>
-          </div>
+          ))}
         </div>
-      )}
-      <Link
-        href="/"
-        className="m-5 px-4 py-2 bg-purple-400 rounded-full text-white font-bold hover:bg-purple-300 transition">
-        Back Home
-      </Link>
-    </div>
+
+        {selected && (
+          <div className="fixed inset-0 bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100 bg-opacity-50 flex justify-center items-center z-50 p-4">
+            <div className="bg-white rounded-xl max-w-3xl w-full overflow-hidden relative">
+              <button
+                onClick={() => setSelected(null)}
+                className="absolute top-3 right-3 text-black text-3xl"
+              >
+                ×
+              </button>
+              {selected.imageUrl && (
+                <img
+                  src={selected.imageUrl}
+                  alt={selected.title}
+                  className="w-full h-96 object-cover"
+                />
+              )}
+              <div className="p-6">
+                <h2 className="text-2xl font-bold mb-2 text-purple-500">{selected.title}</h2>
+                <p className="text-gray-700 mb-2">{selected.description}</p>
+                <p className="text-gray-400 text-sm">{selected.date}</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </ProtectedRoute>
   );
 }

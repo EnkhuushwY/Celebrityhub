@@ -4,6 +4,8 @@ import { useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import Link from "next/link";
+import ProtectedRoute from "../components/ProtectedRoute";
+import Header from "../components/header";
 
 const questions = [
   {
@@ -56,22 +58,14 @@ export default function ActivitiesPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-pink-50 via-purple-50 to-white px-4 py-16">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100 px-4 py-16">
         <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg text-center space-y-6">
-          <h2 className="text-3xl font-bold text-gray-800">✅ Thank you!</h2>
-          <p className="text-gray-600 text-lg">
-            Here’s a summary of your responses:
-          </p>
-          <ul className="text-left mt-4 space-y-2">
-            {questions.map((q, index) => (
-              <li key={index}>
-                <strong>{q.question}</strong>: {answers[index]}
-              </li>
-            ))}
-          </ul>
+          <h2 className="text-3xl font-bold text-purple-600">Thank You! 💜</h2>
+          <p className="text-gray-600 text-lg">Your responses have been saved successfully.</p>
           <Link
             href="/"
-            className="px-4 py-2 bg-purple-400 rounded-full text-white font-bold hover:bg-purple-300 transition">
+            className="inline-block px-6 py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600 transition"
+          >
             Back Home
           </Link>
         </div>
@@ -80,59 +74,64 @@ export default function ActivitiesPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-pink-50 via-purple-50 to-white px-4 py-16">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg text-center space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Step {currentStep + 1} of {questions.length}
-        </h2>
-        <p className="text-gray-600 text-lg">
-          {questions[currentStep].question}
-        </p>
+    <ProtectedRoute>
+      <Header />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100 px-4 py-16">
+        <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-lg text-center space-y-6">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Step {currentStep + 1} of {questions.length}
+          </h2>
+          <p className="text-gray-600 text-lg">{questions[currentStep].question}</p>
 
-        <div className="grid grid-cols-2 gap-4 mt-4">
-          {questions[currentStep].options.map((option) => (
-            <button
-              key={option}
-              onClick={() => handleAnswer(option)}
-              className={`px-4 py-3 rounded-xl border transition
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            {questions[currentStep].options.map((option) => (
+              <button
+                key={option}
+                onClick={() => handleAnswer(option)}
+                className={`px-4 py-3 rounded-xl border transition-all text-sm md:text-base
                 ${
                   answers[currentStep] === option
-                    ? "bg-purple-500 text-white border-purple-500"
-                    : "border-gray-300 hover:bg-purple-100"
-                }`}>
-              {option}
-            </button>
-          ))}
-        </div>
+                    ? "bg-purple-500 text-white border-purple-500 shadow-md"
+                    : "border-gray-300 hover:bg-purple-50"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
 
-        <div className="flex justify-between mt-6">
-          {currentStep > 0 ? (
-            <button
-              onClick={handleBack}
-              className="px-6 py-3 bg-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-400 transition">
-              Back
-            </button>
-          ) : (
-            <div />
-          )}
+          <div className="flex justify-between mt-6">
+            {currentStep > 0 ? (
+              <button
+                onClick={handleBack}
+                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition"
+              >
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
 
-          {currentStep < questions.length - 1 ? (
-            <button
-              onClick={handleNext}
-              disabled={answers[currentStep] === undefined}
-              className="px-6 py-3 bg-purple-500 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-purple-600 transition">
-              Next
-            </button>
-          ) : (
-            <button
-              onClick={handleDone}
-              disabled={answers[currentStep] === undefined}
-              className="px-6 py-3 bg-green-500 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-green-600 transition">
-              Done
-            </button>
-          )}
+            {currentStep < questions.length - 1 ? (
+              <button
+                onClick={handleNext}
+                disabled={answers[currentStep] === undefined}
+                className="px-6 py-3 bg-purple-500 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-purple-600 transition"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                onClick={handleDone}
+                disabled={answers[currentStep] === undefined}
+                className="px-6 py-3 bg-green-500 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-green-600 transition"
+              >
+                Done
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }
