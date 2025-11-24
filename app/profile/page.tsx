@@ -15,9 +15,11 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useRouter } from "next/navigation";
-import { Camera } from "lucide-react";
 import ProtectedRoute from "../components/ProtectedRoute";
+import { FaEdit, FaLongArrowAltLeft, FaPlus } from "react-icons/fa";
+import { IoLogOutOutline, IoSettingsSharp } from "react-icons/io5";
 
+// Spotify API setup
 export default function ProfilePage() {
   const [username, setUsername] = useState<string | null>(null);
   const [bio, setBio] = useState("");
@@ -27,6 +29,7 @@ export default function ProfilePage() {
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [modalPost, setModalPost] = useState<any>(null);
+  const [showSettings, setShowSettings] = useState(false)
 
   const router = useRouter();
 
@@ -50,7 +53,7 @@ export default function ProfilePage() {
     return () => unsubscribe();
   }, [router]);
 
-  // Fetch user posts in realtime
+  // Fetch user posts
   useEffect(() => {
     if (!auth.currentUser) return;
     const postsRef = collection(db, "posts");
@@ -126,13 +129,12 @@ export default function ProfilePage() {
       <div className="min-h-screen w-full bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100 flex flex-col items-center px-4 sm:px-6 md:px-8 py-6">
         {/* Back Button */}
         <div className="w-full max-w-3xl flex flex-col items-center bg-white rounded-xl p-6 md:p-10 shadow-lg relative">
-          {/* Profile Section */}
           <div className="flex flex-col items-center">
             <button
               onClick={() => router.push("/")}
-              className="self-start text-black hover:text-purple-700 font-5xl text-2xl mb-4"
+              className="absolute top-0 left-0 text-xl md:m-10 m-5"
             >
-              ←
+              <FaLongArrowAltLeft />
             </button>
 
             <div className="relative w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-gradient-to-tr from-purple-500 via-pink-400 to-yellow-300 flex items-center justify-center text-5xl font-extrabold text-white shadow-lg">
@@ -142,8 +144,13 @@ export default function ProfilePage() {
                 username?.[0]?.toUpperCase()
               )}
             </div>
-            <h1 className="mt-4 text-2xl sm:text-3xl font-bold">{username}</h1>
-            <p className="text-gray-400 text-sm">{auth.currentUser?.email?.split("@")}</p>
+            <div className="mt-4 flex h-auto items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-bold">{username}</h1>
+              <button onClick={() => setShowSettings(true)} className="text-3xl">
+                <IoSettingsSharp />
+              </button>
+            </div>
+            <p className="text-gray-400 text-sm">{auth.currentUser?.email}</p>
           </div>
 
           {/* Bio & Favorite Song */}
@@ -151,21 +158,21 @@ export default function ProfilePage() {
             {!editMode ? (
               <div className="flex flex-col gap-2">
                 {bio && <p className="text-gray-800">{bio}</p>}
-                {favoriteSong && <p className="text-purple-500 font-medium">{favoriteSong}</p>}
+
                 <div className="flex flex-col sm:flex-row gap-2 mt-4 w-full">
                   <button
                     onClick={() => setEditMode(true)}
-                    className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-white py-2 rounded-xl font-semibold transition"
+                    className="flex-1 flex justify-center items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-white py-2 rounded-xl font-semibold transition"
                   >
-                    ✏️ Edit Profile
+                    <FaEdit /> Edit Profile
                   </button>
                   <button
                     onClick={() =>
                       setModalPost({ title: "", description: "", date: "", imageUrl: "" })
                     }
-                    className="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-xl font-semibold transition"
+                    className="flex-1 flex justify-center items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-xl font-semibold transition"
                   >
-                    ➕ Create Post
+                    <FaPlus /> Create Post
                   </button>
                 </div>
               </div>
@@ -178,13 +185,7 @@ export default function ProfilePage() {
                   onChange={(e) => setBio(e.target.value)}
                   className="w-full p-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none"
                 />
-                <input
-                  type="text"
-                  placeholder="Favorite Song"
-                  value={favoriteSong}
-                  onChange={(e) => setFavoriteSong(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none"
-                />
+
                 <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <button
                     onClick={handleSaveProfile}
@@ -279,6 +280,34 @@ export default function ProfilePage() {
                       Delete
                     </button>
                   )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showSettings && (
+            <div
+              onClick={() => setShowSettings(false)}
+              className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50"
+            >
+              <div className="bg-white rounded-2xl p-6 w-[90%] max-w-md shadow-lg">
+                <h2 className="text-xl font-semibold mb-4 text-center">Settings</h2>
+
+                {/* Buttons */}
+                <div className="flex flex-col items-centers justify-center">
+                  <button
+                    className="flex items-center justify-center pb-5 gap-1 text-red-500"
+                    onClick={() => handleLogout()}
+                  >
+                    <IoLogOutOutline />
+                    Log out
+                  </button>
+                  
+                  <hr></hr>
+                  
+                  <button className="pt-5" onClick={() => setShowSettings(false)}>
+                    Close
+                  </button>
                 </div>
               </div>
             </div>

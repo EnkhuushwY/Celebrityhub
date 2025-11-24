@@ -3,35 +3,28 @@
 import Link from "next/link";
 import { useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/lib/firebase";
-import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { IoBook, IoGift, IoHome, IoPeopleSharp } from "react-icons/io5";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [user] = useAuthState(auth);
   const router = useRouter();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.push("/login");
-  };
-
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Memories", href: "/timeline" },
-    { name: "Activities", href: "/gift" },
-    // { name: "Messages", href: "/guestbook" },
-    { name: "Profile", href: "/profile" },
+    { name: "Home", href: "/", icon: <IoHome /> },
+    { name: "Memories", href: "/timeline", icon: <IoBook /> },
+    { name: "Activities", href: "/gift", icon: <IoGift /> },
+    { name: "Profile", href: "/profile", icon: <IoPeopleSharp /> }, 
   ];
 
   return (
     <header className="fixed top-0 left-0 w-full bg-pink-100 backdrop-blur-md shadow-md z-50">
       <div className="max-w-6xl mx-auto flex justify-between items-center py-4 px-6">
-        <button onClick={() => router.push("/")} className="text-2xl font-bold text-rose-300">Celebrity Hub</button>
+        <button onClick={() => router.push("/")} className="text-2xl font-bold text-rose-300">
+          Celebrity Hub
+        </button>
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex items-center gap-6 text-gray-600 font-medium">
@@ -58,9 +51,10 @@ export default function Header() {
               <li key={link.name}>
                 <Link
                   href={link.href}
-                  className="block text-gray-700 font-medium hover:text-purple-500 transition"
+                  className="flex text-gray-700 font-medium items-center gap-1"
                   onClick={() => setIsOpen(false)}
                 >
+                  {link.icon}
                   {link.name}
                 </Link>
               </li>

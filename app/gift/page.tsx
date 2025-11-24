@@ -4,26 +4,39 @@ import { useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import Link from "next/link";
-import ProtectedRoute from "../components/ProtectedRoute";
 import Header from "../components/header";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const questions = [
   {
-    question: "What gift would you like?",
-    options: ["Book", "Game", "Clothes", "Gadget"],
-  },
-  { question: "Favorite color?", options: ["Red", "Blue", "Pink", "Green"] },
-  {
-    question: "Ideal weekend activity?",
-    options: ["Movie", "Picnic", "Gaming", "Reading"],
-  },
-  {
-    question: "Favorite sweet treat?",
-    options: ["Chocolate", "Candy", "Cake", "Ice cream"],
+    question: "What would you most like us to do together on your birthday?",
+    options: [
+      "Go out for a nice meal",
+      "Watch a movie together",
+      "Go somewhere new",
+      "Just relax and chill at home",
+    ],
   },
   {
-    question: "Holiday destination?",
-    options: ["Beach", "Mountains", "City", "Home"],
+    question: "What would you most like to do together?",
+    options: [
+      "Go out somewhere",
+      "Stay home for a movie marathon",
+      "Adventurous",
+      "Just hang out and laugh together",
+    ],
+  },
+  {
+    question: "What is your “dream” activity to do with me?",
+    options: ["Go on a trip", "Adventurous activity", "Movie marathon & snacks", "Enjoy time together"],
+  },
+  {
+    question: "What type of gift would make you happiest?",
+    options: ["Emotional", "Practical", "Fun", "Surprise"],
+  },
+  {
+    question: "What is your favorite dessert?",
+    options: ["Chocolate", "Cake", "Cookie", "Drink"],
   },
 ];
 

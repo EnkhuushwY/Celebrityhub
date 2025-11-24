@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-   eslint: {
+  eslint: {
     ignoreDuringBuilds: true,
   },
 };

@@ -5,6 +5,7 @@ import { db } from "@/lib/firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Header from "../components/header";
+import { IoClose } from "react-icons/io5";
 
 type Post = {
   id: string;
@@ -64,9 +65,9 @@ export default function TimelinePage() {
             <div className="bg-white rounded-xl max-w-3xl w-full overflow-hidden relative">
               <button
                 onClick={() => setSelected(null)}
-                className="absolute top-3 right-3 text-black text-3xl"
+                className="absolute top-3 right-3 text-white text-3xl"
               >
-                ×
+                <IoClose />
               </button>
               {selected.imageUrl && (
                 <img

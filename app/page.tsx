@@ -4,8 +4,17 @@ import Header from "./components/header";
 import Link from "next/link";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { auth } from "@/lib/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Home() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [user] = useAuthState(auth);
+
+  const greeting =
+    " Wishing you a day filled with warmth, laughter, and the sweetest memories. Let’s make this celebration unforgettable 💖";
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen w-screen overflow-hidden bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100 flex flex-col justify-center items-center">
@@ -22,9 +31,10 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-extrabold text-gray-800 leading-snug"
+            className="text-2xl md:text-6xl font-extrabold text-gray-800 leading-snug"
           >
-            💐 Happy Birthday, <span className="text-purple-600">My Love!</span>
+            <button onClick={() => setIsOpen(true)}>💐</button> Happy Birthday,{" "}
+            <p className="text-purple-600">{user?.displayName}</p>
           </motion.h1>
 
           <motion.p
@@ -33,8 +43,7 @@ export default function Home() {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="text-lg md:text-2xl text-gray-700 max-w-2xl mt-6"
           >
-            Wishing you a day filled with warmth, laughter, and the sweetest memories. Let’s make
-            this celebration unforgettable 💖
+           {greeting}
           </motion.p>
 
           <motion.div
@@ -61,6 +70,30 @@ export default function Home() {
           {/* Extra subtle footer-like note */}
           <p className="text-gray-500 text-sm mt-20 mb-8">Crafted with 💜 for someone special</p>
         </main>
+        {/* Modal */}
+        {isOpen && (
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+            onClick={() => setIsOpen(false)}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-3xl shadow-2xl p-8 text-center w-[90%] max-w-md animate-fadeIn"
+            >
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                💌 Random one to special person
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed">{greeting}</p>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                className="mt-6 bg-gradient-to-r from-pink-400 to-purple-500 text-white px-6 py-2 rounded-full hover:scale-105 transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </ProtectedRoute>
   );

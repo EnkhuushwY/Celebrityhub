@@ -10,6 +10,9 @@
     "deploy": "npm run build && npm run export && firebase deploy"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.0",
     "@supabase/supabase-js": "^2.58.0",
     "date-fns": "^4.1.0",
     "firebase": "^12.3.0",
@@ -22,7 +25,10 @@
     "react-device-detect": "^2.2.3",
     "react-dom": "19.1.0",
     "react-firebase-hooks": "^5.1.1",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "react-spinner": "^0.2.7",
+    "react-spinners": "^0.17.0",
+    "spotify-web-api-node": "^5.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -30,6 +36,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/spotify-web-api-node": "^5.0.11",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
     "tailwindcss": "^4",
