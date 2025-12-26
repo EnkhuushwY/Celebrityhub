@@ -32,7 +32,7 @@ export default function TimelinePage() {
   }, []);
 
   return (
-    <ProtectedRoute>
+    <>
       <Header />
       <div className="min-h-screen p-8 flex flex-col items-center bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100">
         
@@ -73,10 +73,10 @@ export default function TimelinePage() {
                 <img
                   src={selected.imageUrl}
                   alt={selected.title}
-                  className="w-full h-96 object-cover"
+                  className="w-full h-80 flex justify-center items-center object-cover"
                 />
               )}
-              <div className="p-6">
+              <div className="p-6 h-96 md:h-auto overflow-y-auto flex-1 ">
                 <h2 className="text-2xl font-bold mb-2 text-purple-500">{selected.title}</h2>
                 <p className="text-gray-700 mb-2">{selected.description}</p>
                 <p className="text-gray-400 text-sm">{selected.date}</p>
@@ -85,6 +85,6 @@ export default function TimelinePage() {
           </div>
         )}
       </div>
-    </ProtectedRoute>
+    </>
   );
 }

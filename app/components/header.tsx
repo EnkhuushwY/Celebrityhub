@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import { IoBook, IoGift, IoHome, IoPeopleSharp } from "react-icons/io5";
+import logo from "../assets/logo.jpg";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +18,7 @@ export default function Header() {
     { name: "Home", href: "/", icon: <IoHome /> },
     { name: "Memories", href: "/timeline", icon: <IoBook /> },
     { name: "Activities", href: "/gift", icon: <IoGift /> },
-    { name: "Profile", href: "/profile", icon: <IoPeopleSharp /> }, 
+    { name: "Profile", href: "/profile", icon: <IoPeopleSharp /> },
   ];
 
   return (
@@ -49,11 +51,7 @@ export default function Header() {
           <ul className="flex flex-col gap-4 px-6 py-4">
             {navLinks.map((link) => (
               <li key={link.name}>
-                <Link
-                  href={link.href}
-                  className="flex text-gray-700 font-medium items-center gap-1"
-                  onClick={() => setIsOpen(false)}
-                >
+                <Link href={link.href} className="flex text-gray-700 font-medium items-center gap-1" onClick={() => setIsOpen(false)}>
                   {link.icon}
                   {link.name}
                 </Link>

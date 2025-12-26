@@ -1,19 +1,32 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/useAuth";
+import { auth } from "@/lib/firebase";
+import { User, onAuthStateChanged } from "firebase/auth";
 import { PacmanLoader } from "react-spinners";
 
-export default function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
+type ProtectedRouteProps = {
+  children: ReactNode;
+};
+
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login");
-    }
-  }, [user, loading, router]);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+
+      if (!currentUser) {
+        router.push("/login");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
 
   if (loading) {
     return (
@@ -23,5 +36,6 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
     );
   }
 
+  // Хэрэглэгч байхгүй бол ямар ч content харуулахгүй
   return <>{user ? children : null}</>;
 }
