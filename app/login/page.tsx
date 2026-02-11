@@ -2,18 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
-import {
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  browserSessionPersistence,
-  setPersistence,
-  signInWithRedirect,
-} from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, browserSessionPersistence, setPersistence, signInWithRedirect } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { isMobile } from "react-device-detect"
+import { isMobile } from "react-device-detect";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -26,8 +19,11 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await setPersistence(auth, browserSessionPersistence);
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push("/");
+      const res = await signInWithEmailAndPassword(auth, email, password);
+
+      document.cookie = `token=${res.user.uid}; path=/`;
+
+      router.replace("/");
     } catch (err: any) {
       setError(err.message);
     }
@@ -37,12 +33,14 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
     try {
       await setPersistence(auth, browserSessionPersistence);
+
       if (isMobile) {
-        await signInWithRedirect(auth, provider); // Mobile fallback
+        await signInWithRedirect(auth, provider);
       } else {
-        await signInWithPopup(auth, provider); // Desktop
-      };
-      router.push("/");
+        const res = await signInWithPopup(auth, provider);
+        document.cookie = `token=${res.user.uid}; path=/`;
+        router.replace("/");
+      }
     } catch (err: any) {
       setError(err.message);
     }
@@ -50,43 +48,25 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push("/");
+      router.replace("/");
     }
-  }, [user, loading, router]);
+  }, [user, loading]);
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-50 to-white px-4">
       <div className="bg-white shadow-2xl rounded-3xl p-8 w-full max-w-md text-center space-y-6">
         <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">Welcome 💫</h1>
-        <p className="text-gray-600 text-sm md:text-base">
-          Log in to continue spreading birthday joy 🎂
-        </p>
+        <p className="text-gray-600 text-sm md:text-base">Log in to continue spreading birthday joy 🎂</p>
 
         <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <input type="email" placeholder="Email" className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none" value={email} onChange={(e) => setEmail(e.target.value)} required />
 
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <input type="password" placeholder="Password" className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none" value={password} onChange={(e) => setPassword(e.target.value)} required />
 
           {error && <p className="text-red-500 text-sm bg-red-50 p-2 rounded-lg">{error}</p>}
 
-          <button
-            type="submit"
-            className="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-xl transition transform hover:scale-[1.02]"
-          >
+          <button type="submit" className="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-xl transition transform hover:scale-[1.02]">
             Login
           </button>
         </form>
@@ -97,10 +77,7 @@ export default function LoginPage() {
           <div className="w-1/4 h-[1px] bg-gray-300" />
         </div>
 
-        <button
-          onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 font-medium hover:bg-gray-50 transition"
-        >
+        <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 font-medium hover:bg-gray-50 transition">
           <FcGoogle className="text-2xl" />
           Continue with Google
         </button>

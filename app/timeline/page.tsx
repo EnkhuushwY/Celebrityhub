@@ -35,23 +35,12 @@ export default function TimelinePage() {
     <>
       <Header />
       <div className="min-h-screen p-8 flex flex-col items-center bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100">
-        
         <h1 className="text-4xl font-bold mt-15 mb-8 text-purple-700">Our Memories❤️</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
           {posts.map((post) => (
-            <div
-              key={post.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer hover:scale-105 transform transition"
-              onClick={() => setSelected(post)}
-            >
-              {post.imageUrl ? (
-                <img src={post.imageUrl} alt={post.title} className="w-full h-48 object-cover" />
-              ) : (
-                <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">
-                  No Image
-                </div>
-              )}
+            <div key={post.id} className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer hover:scale-105 transform transition" onClick={() => setSelected(post)}>
+              {post.imageUrl ? <img src={post.imageUrl} alt={post.title} className="w-full h-48 object-cover top-0 left-0" /> : <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">No Image</div>}
               <div className="p-4">
                 <h2 className="font-bold text-lg">{post.title}</h2>
                 <p className="text-sm text-gray-500">{post.date}</p>
@@ -63,17 +52,14 @@ export default function TimelinePage() {
         {selected && (
           <div className="fixed inset-0 bg-gradient-to-br from-pink-50 via-rose-50 to-purple-100 bg-opacity-50 flex justify-center items-center z-50 p-4">
             <div className="bg-white rounded-xl max-w-3xl w-full overflow-hidden relative">
-              <button
-                onClick={() => setSelected(null)}
-                className="absolute top-3 right-3 text-white text-3xl"
-              >
+              <button onClick={() => setSelected(null)} className="absolute top-3 right-3 text-gray-500 text-3xl">
                 <IoClose />
               </button>
               {selected.imageUrl && (
                 <img
                   src={selected.imageUrl}
                   alt={selected.title}
-                  className="w-full h-80 flex justify-center items-center object-cover"
+                  className="w-full h-80 flex object-cover"
                 />
               )}
               <div className="p-6 h-96 md:h-auto overflow-y-auto flex-1 ">
